@@ -1,7 +1,7 @@
 (function(){
 
   var app = angular.module('group', []);
-  var coreURL = 'http://localhost:8080/BackendGroupApp';
+  var coreURL = 'http://localhost:8080';
 
   app.controller('GroupController', function($scope, $http){
 		$scope.docenten = [];
