@@ -4,15 +4,16 @@
   var coreURL = 'http://localhost:8080';
 
   app.controller('GroupController', function($scope, $http){
-		$scope.docenten = [];
+    $scope.name = "students";
+		$scope.data = [];
+    $scope.filteredData = $scope.data;
+
     $scope.pageSize = 10;
     $scope.currentPage = 0;
     $scope.searchQuery = "";
 
-    $scope.filteredDocenten = $scope.docenten;
-
     $scope.pageCount = function(){
-      return Math.ceil($scope.filteredDocenten.length / $scope.pageSize);
+      return Math.ceil($scope.filteredData.length / $scope.pageSize);
     };
     $scope.pageNext = function(){
       $scope.currentPage++;
@@ -21,47 +22,72 @@
       $scope.currentPage--;
     }
 
-    $scope.createData = {
-      firstName : "",
-      lastName : "",
-      errorMessage : "",
-      create : function(){
-        if(this.firstName != "" && this.lastName != ""){
-          var request = $http(
-          {
-            url : coreURL + '/teachers/create',
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-            },
-            data: "firstName="+this.firstName+"&lastName=" + this.lastName
-          });
-
-          request.error(function(data){
-            console.log(data);
-          });
-
-          request.success(function(data){
-            $scope.docenten = data;
-          });
-
-          this.firstName = "";
-          this.lastName = "";
-        }else{
-          this.errorMessage = "Please fill in both first and last name!";
-        }
-      }
+    $scope.init = function(name){
+      $scope.name = name;
+      $scope.list();
     }
 
-    //request the current student list.
-    $http.get(coreURL + '/teachers/list')
-      .success(function(data) {
-        $scope.docenten = data;
-      }
-    );
+    $scope.list = function(){
+      $http.get(coreURL + '/'+$scope.name+'/list')
+        .success(function(data) {
+          $scope.data = data;
+        }
+      );
+    }
 
+    $scope.create = function(firstName, lastName){
+      if(firstName == undefined || firstName == "")
+        return;
+      if(lastName == undefined || lastName == "")
+        return;
+      var request = $http(
+      {
+        url : coreURL + '/'+$scope.name+'/create',
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data: "firstName="+firstName + "&lastName=" + lastName
+      });
+
+      request.error(function(data){
+        console.log(data);
+      });
+
+      request.success(function(data){
+        $scope.data = data;
+      });
+    }
+
+    $scope.delete = function(id){
+      var request = $http(
+      {
+        url : coreURL + '/'+$scope.name+'/remove',
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data: "teacherId="+id
+      });
+
+      request.error(function(data){
+        console.log(data);
+      });
+
+      request.success(function(data){
+        $scope.data = data;
+      });
+    }
+
+    //satisfy the auto focus on modal open
+    $('#createModal').on('shown.bs.modal', function () {
+      $('#inputForm').focus();
+    });
 
   });
+
+
+  //start from app filter
 
   app.filter('startFrom', function() {
     return function(input, start) {
@@ -72,5 +98,7 @@
         return input.slice(start);
     }
   });
+
+
 
 })();
