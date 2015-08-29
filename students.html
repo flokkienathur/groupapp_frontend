@@ -10,7 +10,7 @@
       .top-buffer { margin-top:20px;}
     </style>
   </head>
-  <body ng-controller="GroupController" ng-init="listTeachers()">
+  <body ng-controller="GroupController" ng-init="listStudents()">
 
     <!-- NAVBAR -->
     <nav class="navbar navbar-default" role="navigation">
@@ -22,8 +22,8 @@
 
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="index.html">Docenten <span class="sr-only">(current)</span></a></li>
-            <li><a href="students.html">Studenten</a></li>
+            <li><a href="index.html">Docenten</a></li>
+            <li class="active"><a href="students.html">Studenten <span class="sr-only">(current)</span></a></li>
             <li><a href="groups.html">Groepen</a></li>
           </ul>
         </div>
@@ -33,7 +33,7 @@
     <!-- CONTENTS -->
     <div class="container">
       <div class="page-header">
-        <h1>Docenten</h1>
+        <h1>Studenten</h1>
       </div>
 
       <!-- BAR -->
@@ -57,7 +57,7 @@
         </div>
 
         <div class="col-xs-4">
-          <input type="text" placeholder="Zoeken in Docenten" class="form-control"  ng-model="searchQuery">
+          <input type="text" placeholder="Zoeken in Studenten" class="form-control"  ng-model="searchQuery">
         </div>
 
         <div class="col-xs-1">
@@ -80,15 +80,15 @@
             </th>
           </tr>
 
-          <tr ng-repeat="docent in filteredData = (teachers | filter:searchQuery) | orderBy:'lastName' | startFrom:currentPage*pageSize | limitTo:pageSize" ng-animate="'animate'">
+          <tr ng-repeat="student in filteredData = (students | filter:searchQuery) | orderBy:'lastName' | startFrom:currentPage*pageSize | limitTo:pageSize" ng-animate="'animate'">
             <td>
-              <a class="btn btn-default" ng-click="deleteTeacher(docent.id)">&#10006;</a>
+              <a class="btn btn-default" ng-click="deleteStudent(student.id)">&#10006;</a>
             </td>
             <td>
-              {{docent.firstName}}
+              {{student.firstName}}
             </td>
             <td>
-              {{docent.lastName}}
+              {{student.lastName}}
             </td>
           </tr>
         </table>
@@ -101,7 +101,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h3 class="modal-title">Docent Toevoegen</h3>
+              <h3 class="modal-title">Student Toevoegen</h3>
             </div>
             <form role="form">
               <div class="modal-body">
@@ -115,7 +115,7 @@
                 data-dismiss="modal"
 
                 ng-click="
-                  createTeacher(createData.firstName,createData.lastName);
+                  createStudent(createData.firstName,createData.lastName);
                   createData.firstName='';
                   createData.lastName='';
                   "

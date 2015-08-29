@@ -1,0 +1,49 @@
+<div id="addStudentModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title">Studenten Wijzigen</h3>
+      </div>
+      <div class="modal-body" style="overflow: auto; height:256px;">
+        <table class="table table-hover">
+          <tr>
+            <th class="col-xs-1">&#10133;/&#10134;</th>
+            <th class="col-xs-5">
+              Voornaam
+            </th>
+            <th class="col-xs-5">
+              Achternaam
+            </th>
+          </tr>
+          <tr ng-repeat="student in students | filter:modalSearch | orderBy:'lastName'">
+            <td>
+              <a ng-show="student.inGroup!=selectedGroup.id" class="btn btn-primary"
+              ng-click="groupAddStudent(selectedGroup.id, student.id);listStudents()"
+              >&#10133;</a>
+              <a ng-show="student.inGroup==selectedGroup.id" class="btn btn-warning"
+              ng-click="groupRemoveStudent(selectedGroup.id, student.id);listStudents()"
+              >&#10134;</a>
+            </td>
+            <td>
+              {{student.firstName}}
+            </td>
+            <td>
+              {{student.lastName}}
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <div class="col-xs-8">
+          <input type="text" class="form-control" placeholder="Zoeken in Student" ng-model="modalSearch">
+        </div>
+        <div class="col-xs-4">
+          <button type="button" class="btn btn-default"
+          data-dismiss="modal"
+          >Close</button>
+        </div>
+      </div>
+
+    </div>

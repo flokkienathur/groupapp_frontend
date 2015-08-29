@@ -1,0 +1,28 @@
+<div id="createModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h3 class="modal-title">Groep Toevoegen</h3>
+      </div>
+      <form role="form">
+        <div class="modal-body">
+          <strong>Naam</strong>
+          <input id="inputForm" type="text" class="form-control" placeholder="Groep Naam" ng-model="createData.name">
+        </div>
+        <div class="modal-footer">
+          <input type="submit" class="btn btn-primary" value="Maak aan"
+          data-dismiss="modal"
+
+          ng-click="
+            createGroup(createData.name);
+            createData.name='';
+            "
+          >
+        </div>
+    </form>
+    </div>
+
+  </div>
+</div>
