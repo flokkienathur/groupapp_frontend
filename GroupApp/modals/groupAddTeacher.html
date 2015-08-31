@@ -1,0 +1,36 @@
+<div ng-init="searchQuery='';group=argument;data.listTeachers();" >
+
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="close()">&times;</button>
+    <h3 class="modal-title">Set teacher</h3>
+  </div>
+
+  <div class="modal-body">
+    <div>Set teacher for <strong>{{group.name}}</strong>.</div>
+    <div style="height:256px; overflow:auto;border:1px solid #bbbbbb">
+      <table class="table table-hover">
+        <tr>
+          <th class="col-md-2">Action</th>
+          <th class="col-md-5">First Name</th>
+          <th class="col-md-5">Last Name</th>
+        </tr>
+        <tr ng-repeat="teacher in data.teachers | filter:searchQuery">
+          <th>
+            <button ng-show="group.id != teacher.mentor" class="btn btn-default" ng-click="data.groupSetTeacher(group.id, teacher.id,true)">&#10004;</button>
+            <button ng-show="group.id == teacher.mentor" class="btn btn-danger" ng-click="data.groupSetTeacher(0, teacher.id, true)">&#10006;</button>
+          </th>
+          <th>{{teacher.firstName}}</th>
+          <th>{{teacher.lastName}}</th>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+
+  <div class="modal-footer">
+      <div class="col-md-8"><input placeHolder="Search..." type="text" class="form-control" ng-model="searchQuery"></input></div>
+      <div class="col-md-4"><button class="btn btn-primary" type="button" ng-click="close()">Done</button>
+      <button class="btn btn-warning" type="button" ng-click="close()">Cancel</button></div>
+  </div>
+
+</div>

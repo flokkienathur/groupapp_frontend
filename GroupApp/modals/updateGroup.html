@@ -1,0 +1,18 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="close()">&times;</button>
+  <h3 class="modal-title">Edit Group</h3>
+</div>
+
+<form>
+  <div ng-init="group=argument;name=group.name" class="modal-body">
+    <div>Editing <strong>{{group.name}}</strong></div>
+    <hr>
+    <strong>Name</strong>
+    <input class="form-control" type="text" placeholder="Name" ng-model="name">
+  </div>
+
+  <div class="modal-footer">
+      <input type="submit" class="btn btn-primary" value="Save" ng-click="data.updateGroup(group.id, name);close()">
+      <button class="btn btn-warning" type="button" ng-click="close()">Cancel</button>
+  </div>
+</form>

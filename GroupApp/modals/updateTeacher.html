@@ -1,0 +1,23 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="close()">&times;</button>
+  <h3 class="modal-title">Edit Teacher</h3>
+</div>
+
+<form>
+  <div ng-init="teacher=argument;
+    firstName=teacher.firstName;
+    lastName=teacher.lastName"
+    class="modal-body">
+    <div>Editing <strong>{{teacher.firstName}} {{teacher.lastName}}</strong></div>
+    <hr>
+    <strong>First Name</strong>
+    <input class="form-control" type="text" placeholder="First Name" ng-model="firstName">
+    <strong>Last Name</strong>
+    <input class="form-control" type="text" placeholder="Last Name" ng-model="lastName">
+  </div>
+
+  <div class="modal-footer">
+      <input type="submit" class="btn btn-primary" value="Save" ng-click="data.updateTeacher(teacher.id,firstName,lastName);close()">
+      <button class="btn btn-warning" type="button" ng-click="close()">Cancel</button>
+  </div>
+</form>

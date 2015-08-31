@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html ng-app="groupapp">
+  <head>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-animate.min.js"></script>
+    <script src="js/ui-bootstrap.min.js"></script>
+
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/modals.js"></script>
+
+    <style>
+      .extra-space{
+        padding-bottom:10px;
+      }
+    </style>
+
+    <title>Teachers</title>
+  </head>
+  <body ng-controller="CoreController">
+    <nav class="navbar navbar-default">
+      <a class="navbar-brand" href="#">GroupApp</a>
+      <ul class="nav navbar-nav">
+        <li><a href="teachers.html">Teachers</a></li>
+        <li><a href="#">Students</a></li>
+        <li><a href="groups.html">Groups</a></li>
+      </ul>
+    </nav>
+
+    <div class="container">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <h2>Students</h2>
+      </div>
+
+      <!-- Page navigation and search -->
+      <div ng-controller="GenericNavigationController" ng-init="navigation.init('data.filteredStudents')" class="extra-space">
+        <div class="col-md-7">
+          <button ng-click="navigation.previous()" ng-disabled="!navigation.hasPrevious()" type="button" class="btn btn-primary">&#171;</button>
+          {{navigation.currentPage()}} / {{navigation.totalPages()}}
+          <button ng-click="navigation.next()" ng-disabled="!navigation.hasNext()" type="button" class="btn btn-primary">&#187;</button>
+          <span>{{data.filteredStudents.length}} people found.</span>
+        </div>
+
+        <div class="col-md-4">
+          <input type="text" placeholder="Search..." ng-model="navigation.searchQuery" class="form-control">
+        </div>
+
+        <div class="col-md-1">
+          <button type="button" ng-click="open('modals/addStudent.html')" class="btn btn-primary">&#10133;</button>
+        </div>
+      </div>
+
+      <hr>
+
+      <!-- Table with student content -->
+      <table ng-init="data.listStudents()" class="table table-hover">
+        <tr>
+          <th class="col-md-2">Action</th>
+          <th class="col-md-5">First Name</th>
+          <th class="col-md-5">Last Name</th>
+        </tr>
+
+        <tr ng-repeat="student in data.filteredStudents = (data.students | filter:navigation.searchQuery) | startFrom:(navigation.currentPage() - 1)*10 | limitTo:10">
+          <td>
+            <button type="button" class="btn btn-danger" ng-click="data.deleteStudent(student.id)">&#10006;</button>
+            <button ng-click="open('modals/updateStudent.html', student)" type="button" class="btn btn-default">&#x270E;</button>
+          </td>
+          <td>
+            {{student.firstName}}
+          </td>
+          <td>
+            {{student.lastName}}
+          </td>
+        </tr>
+      </table>
+
+    </div>
+  </body>
+</html>
