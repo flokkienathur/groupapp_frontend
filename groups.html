@@ -1,249 +1,93 @@
 <!DOCTYPE html>
-<html ng-app="group">
+<html ng-app="groupapp">
   <head>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" type="text/css" href="css/animate.css" />
+    <meta charset="utf-8">
 
-    <script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
-    <script type="text/javascript" src="js/angular.min.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="app.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+
+    <script src="js/angular.min.js"></script>
+    <script src="js/angular-animate.min.js"></script>
+    <script src="js/ui-bootstrap.min.js"></script>
+
+    <script src="js/core.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/modals.js"></script>
 
     <style>
-      .top-buffer { margin-top:20px;}
+      .extra-space{
+        padding-bottom:10px;
+      }
     </style>
+
+    <title>Teachers</title>
   </head>
-  <body ng-controller="GroupController" ng-init="listGroups()">
-
-    <!-- NAVBAR -->
-    <nav class="navbar navbar-default" role="navigation">
-      <div class="container-fluid">
-
-        <div class="navbar-header">
-          <a class="navbar-brand" href="#">JUSTF</a>
-        </div>
-
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-            <li><a href="index.html">Docenten</a></li>
-            <li><a href="students.html">Studenten</a></li>
-            <li class="active"><a href="groups.html">Groepen <span class="sr-only">(current)</span></a></li>
-          </ul>
-        </div>
-      </div>
+  <body ng-controller="CoreController">
+    <nav class="navbar navbar-default">
+      <a class="navbar-brand" href="#">GroupApp</a>
+      <ul class="nav navbar-nav">
+        <li><a href="teachers.html">Teachers</a></li>
+        <li><a href="students.html">Students</a></li>
+        <li><a href="groups.html">Groups</a></li>
+      </ul>
     </nav>
 
-    <!-- CONTENTS -->
     <div class="container">
+
+      <!-- Page header -->
       <div class="page-header">
-        <h1>Groepen</h1>
+        <h2>Groups</h2>
       </div>
 
-      <!-- BAR -->
-      <div class="row">
-        <div class="col-xs-7">
-          <button ng-disabled="currentPage==0" class="btn btn-primary" type="button"
-            ng-click="currentPage = currentPage - 1"
-              >
-              &#171;
-          </button>
-
-          {{currentPage + 1}} / {{pageCount()}}
-
-          <button ng-disabled="currentPage==(pageCount()-1)" class="btn btn-primary" type="button"
-            ng-click="currentPage = currentPage + 1"
-            >
-            &#187;
-          </button>
-
-          <span>{{filteredData.length}} persons found</span>
+      <!-- Page navigation and search -->
+      <div ng-controller="GenericNavigationController" ng-init="navigation.init('data.filteredGroups')" class="extra-space">
+        <div class="col-md-7">
+          <button ng-click="navigation.previous()" ng-disabled="!navigation.hasPrevious()" type="button" class="btn btn-primary">&#171;</button>
+          {{navigation.currentPage()}} / {{navigation.totalPages()}}
+          <button ng-click="navigation.next()" ng-disabled="!navigation.hasNext()" type="button" class="btn btn-primary">&#187;</button>
+          <span>{{data.filteredGroups.length}} groups found.</span>
         </div>
 
-        <div class="col-xs-4">
-          <input type="text" placeholder="Zoeken in Groepen" class="form-control"  ng-model="searchQuery">
+        <div class="col-md-4">
+          <input type="text" placeholder="Search..." ng-model="navigation.searchQuery" class="form-control">
         </div>
 
-        <div class="col-xs-1">
-          <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#createModal">
-            &#10133;
-          </button>
+        <div class="col-md-1">
+          <button type="button" ng-click="open('modals/addGroup.html', group)" class="btn btn-primary">&#10133;</button>
         </div>
       </div>
 
-      <!-- TABLE -->
-      <div class="row top-buffer">
-        <table class="table table-hover">
-          <tr>
-            <th class="col-xs-2">Acties</th>
-            <th class="col-xs-3">
-              Naam
-            </th>
-            <th class="col-xs-3">
-              Begeleider
-            </th>
-            <th class="col-xs-4">
-              Studenten
-            </th>
-          </tr>
+      <hr>
 
-          <tr ng-repeat="group in filteredData = (groups | filter:searchQuery) | orderBy:'lastName' | startFrom:currentPage*pageSize | limitTo:pageSize">
-            <td ng-mouseover="setSelectedGroup(group.id)">
-              <a class="btn btn-default" ng-click="deleteGroup(group.id)">&#10006;</a>
-              <a class="btn btn-default" data-toggle="modal" data-target="#setTeacherModal"><span class="glyphicon glyphicon-user"></span></a>
-              <a class="btn btn-default" data-toggle="modal" data-target="#addStudentModal"><span class="glyphicon glyphicon-user"></span><span class="glyphicon glyphicon-plus-sign"></span></a>
-            </td>
-            <td>
-              {{group.name}}
-            </td>
-            <td>
-              {{group.teacher.firstName}} {{group.teacher.lastName}}
-            </td>
-            <td>
-              <ul>
-                <li ng-repeat="student in group.students">
-                  {{student.firstName}} {{student.lastName}}
-                </li>
-              </ul>
-            </td>
-          </tr>
-        </table>
-      </div>
+      <!-- Table with student content -->
+      <table ng-init="data.listGroups()" class="table table-hover">
+        <tr>
+          <th class="col-md-3">Action</th>
+          <th class="col-md-2">Name</th>
+          <th class="col-md-3">Mentor</th>
+          <th class="col-md-4">Students</th>
+        </tr>
 
-      <!-- MODAL -->
-      <div id="createModal" class="modal fade" role="dialog">
-        <div class="modal-dialog">
+        <tr ng-repeat="group in data.filteredGroups = (data.groups | filter:navigation.searchQuery) | startFrom:(navigation.currentPage() - 1)*10 | limitTo:10">
+          <td>
+            <button ng-click="data.deleteGroup(group.id)" type="button" class="btn btn-danger" >&#10006;</button>
 
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h3 class="modal-title">Groep Toevoegen</h3>
-            </div>
-            <form role="form">
-              <div class="modal-body">
-                <strong>Naam</strong>
-                <input id="inputForm" type="text" class="form-control" placeholder="Groep Naam" ng-model="createData.name">
-              </div>
-              <div class="modal-footer">
-                <input type="submit" class="btn btn-primary" value="Maak aan"
-                data-dismiss="modal"
-
-                ng-click="
-                  createGroup(createData.name);
-                  createData.name='';
-                  "
-                >
-              </div>
-          </form>
-          </div>
-
-        </div>
-      </div>
-
-      <div id="setTeacherModal" class="modal fade" role="dialog">
-        <div class="modal-dialog" ng-init="listTeachers()">
-
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h3 class="modal-title">Begeleider Wijzigen</h3>
-            </div>
-            <div class="modal-body" style="overflow: auto; height:256px;">
-              <table class="table table-hover">
-                <tr>
-                  <th class="col-xs-1">&#10133;/&#10134;</th>
-                  <th class="col-xs-5">
-                    Voornaam
-                  </th>
-                  <th class="col-xs-5">
-                    Achternaam
-                  </th>
-                </tr>
-                <tr ng-repeat="teacher in teachers | filter:modalSearch | orderBy:'lastName'">
-                  <td>
-                    <a ng-show="teacher.mentor!=selectedGroup" class="btn btn-primary"
-                    ng-click="groupSetTeacher(selectedGroup, teacher.id, true);"
-                    >&#10004;</a>
-                    <a ng-show="teacher.mentor==selectedGroup" class="btn btn-danger"
-                    ng-click="groupSetTeacher(0, teacher.id, true);"
-                    >&#10006;</a>
-                  </td>
-                  <td>
-                    {{teacher.firstName}}
-                  </td>
-                  <td>
-                    {{teacher.lastName}}
-                  </td>
-                </tr>
-              </table>
-            </div>
-            <div class="modal-footer">
-              <div class="col-xs-8">
-                <input type="text" class="form-control" placeholder="Zoeken in Docenten" ng-model="modalSearch">
-              </div>
-              <div class="col-xs-4">
-                <button type="button" class="btn btn-default"
-                data-dismiss="modal"
-                >Close</button>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </div>
-
-      <div id="addStudentModal" class="modal fade" role="dialog">
-        <div class="modal-dialog" ng-init="listStudents()">
-
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h3 class="modal-title">Studenten Wijzigen</h3>
-            </div>
-            <div class="modal-body" style="overflow: auto; height:400px;">
-              <table class="table table-hover">
-                <tr>
-                  <th class="col-xs-1">&#10133;/&#10134;</th>
-                  <th class="col-xs-5">
-                    Voornaam
-                  </th>
-                  <th class="col-xs-5">
-                    Achternaam
-                  </th>
-                </tr>
-                <tr ng-repeat="student in students | filter:modalSearch | orderBy:'lastName'">
-                  <td>
-                    <a ng-show="student.inGroup!=selectedGroup" class="btn btn-primary"
-                    ng-click="groupAddStudent(selectedGroup, student.id, true);"
-                    >&#10133;</a>
-                    <a ng-show="student.inGroup==selectedGroup" class="btn btn-danger"
-                    ng-click="groupRemoveStudent(selectedGroup, student.id, true);"
-                    >&#10134;</a>
-                  </td>
-                  <td>
-                    {{student.firstName}}
-                  </td>
-                  <td>
-                    {{student.lastName}}
-                  </td>
-                </tr>
-              </table>
-            </div>
-            <div class="modal-footer">
-              <div class="col-xs-8">
-                <input type="text" class="form-control" placeholder="Zoeken in Student" ng-model="modalSearch">
-              </div>
-              <div class="col-xs-4">
-                <button type="button" class="btn btn-default"
-                data-dismiss="modal"
-                >Close</button>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-      </div>
+            <button ng-click="open('modals/updateGroup.html',group)" type="button" class="btn btn-default">&#x270E;</button>
+            <button ng-click="open('modals/groupAddTeacher.html',group)" type="button" class="btn btn-default">&#128104;</button>
+            <button ng-click="open('modals/groupAddStudents.html',group)" type="button" class="btn btn-default">&#128104;&#10133;</button>
+          </td>
+          <td>
+            {{group.name}}
+          </td>
+          <td>
+            {{group.teacher.firstName}} {{group.teacher.lastName}}
+          </td>
+          <td>
+            <ul>
+              <li ng-repeat="student in group.students">{{student.firstName}} {{student.lastName}}</li>
+            </ul>
+          </td>
+        </tr>
+      </table>
 
     </div>
   </body>
